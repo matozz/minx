@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>short</title>
+    <title>Minx</title>
     <style>
       :root {
         --color-primary: #5c7cfa;
@@ -202,7 +202,9 @@
     </style>
   </head>
   <body>
-    <header><h1>short</h1></header>
+    <header>
+      <h1 style="font-weight: 500;">Minx</h1>
+    </header>
     <main x-data="app" x-cloak>
       <p x-show.transition.opacity="alert" :class="alert?.type" x-text="alert?.message"></p>
       <input placeholder="Enter a URL to shorten..." x-model="url" x-ref="url" />
@@ -216,8 +218,8 @@
       <button :class="{ loading }" :disabled="loading || isValidated()" @click="submit($refs, $nextTick)">Generate</button>
     </main>
     <footer>
-      This <a href="https://t.zce.me">service</a> is hosted on <a href="https://vercel.com">Vercel</a><br />
-      <a href="https://github.com/zce/short">&lt;/&gt;</a> with <i>&hearts;</i> by <a href="https://zce.me">zce</a>
+      This service is hosted on <a href="https://vercel.com">Vercel</a><br />
+      <a href="#">&lt;/&gt;</a> with <i>&hearts;</i> by <a href="https://matoz.live">matoz</a>
     </footer>
     <script src="alpine.js"></script>
     <script>
