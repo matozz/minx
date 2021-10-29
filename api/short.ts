@@ -13,7 +13,7 @@ export default async (
 
   try {
     // get target url by slug
-    const url = await storage.getUrlBySlug(slug);
+    const [url, timestamp] = (await storage.getUrlBySlug(slug)) ?? [];
 
     // target url not found
     if (url == null) return res.status(404).send("Not Found");

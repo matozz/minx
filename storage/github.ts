@@ -16,7 +16,7 @@ const {
 
 const endpoint = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${GITHUB_ISSUE_ID}/comments`;
 const whiteList = ["OWNER", "MEMBER"];
-const splitter = "||";
+const splitter = " || ";
 const date = 24 * 60 * 60 * 1000;
 
 const requestOptions = {
@@ -49,14 +49,14 @@ export default class GitHub extends BaseStorage {
     return slug;
   }
 
-  async getUrlBySlug(slug: string): Promise<string | undefined> {
+  async getUrlBySlug(slug: string): Promise<string[] | undefined> {
     for await (const item of this.fetchComments()) {
       // ignore items not author added
       if (!whiteList.includes(item.author_association)) continue;
       // parse each item to get the mapping
-      const [key, value] = item.body.trim().split(splitter);
+      const [key, value, timestamp] = item.body.trim().split(splitter);
       // item format checking
-      if (value != null && key === slug) return value;
+      if (value != null && key === slug) return [value, timestamp];
     }
   }
 

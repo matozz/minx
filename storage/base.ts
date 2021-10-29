@@ -23,7 +23,7 @@ export default abstract class BaseStorage {
     slug?: string
   ): Promise<string>;
 
-  abstract getUrlBySlug(slug: string): Promise<string | undefined>;
+  abstract getUrlBySlug(slug: string): Promise<string[] | undefined>;
 
   abstract getSlugByUrl(url: string): Promise<string | undefined>;
 }
