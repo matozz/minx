@@ -17,7 +17,11 @@ export default abstract class BaseStorage {
     console.log({ slug, ua, ip, date: new Date() });
   }
 
-  abstract addLink(url: string, slug?: string): Promise<string>;
+  abstract addLink(
+    url: string,
+    expires: number,
+    slug?: string
+  ): Promise<string>;
 
   abstract getUrlBySlug(slug: string): Promise<string | undefined>;
 

@@ -17,6 +17,7 @@ const {
 const endpoint = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${GITHUB_ISSUE_ID}/comments`;
 const whiteList = ["OWNER", "MEMBER"];
 const splitter = "||";
+const date = 24 * 60 * 60 * 1000;
 
 const requestOptions = {
   headers: {
@@ -35,13 +36,14 @@ export default class GitHub extends BaseStorage {
     });
   }
 
-  async addLink(url: string, slug?: string): Promise<string> {
+  async addLink(url: string, expires: number, slug?: string): Promise<string> {
     slug = slug == null || slug === "" ? await this.createSlug() : slug;
+    expires = expires != -1 ? Date.now() + date * expires : -1;
 
     // create github repo issue comment
     await got.post<Comment>(endpoint, {
       ...requestOptions,
-      json: { body: slug + splitter + url },
+      json: { body: slug + splitter + url + splitter + expires },
     });
 
     return slug;

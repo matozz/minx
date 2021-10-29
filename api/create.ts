@@ -7,7 +7,15 @@ export default async (
 ): Promise<any> => {
   // params from request body or querystring
   const params = req.body ?? req.query;
-  const { url = "", slug = "" } = params as { url?: string; slug?: string };
+  const {
+    url = "",
+    slug = "",
+    expires = 7,
+  } = params as {
+    url?: string;
+    slug?: string;
+    expires?: number;
+  };
 
   // url is required
   if (url === "") {
@@ -59,7 +67,7 @@ export default async (
     }
 
     // create if not exists
-    const newSlug = await storage.addLink(url, slug);
+    const newSlug = await storage.addLink(url, expires, slug);
 
     // response
     res.send({ slug: newSlug, link: origin + newSlug });
