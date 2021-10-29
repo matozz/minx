@@ -16,7 +16,10 @@ export default async (
     const [url, timestamp] = (await storage.getUrlBySlug(slug)) ?? [];
 
     // target url not found
-    if (url == null) return res.status(404).send("Not Found");
+    if (url == null) return res.status(404).redirect("/error/404");
+
+    // target url expired
+    if (Date.now() > +timestamp) return res.status(404).redirect("/error/404");
 
     // add access log
     await storage.addLog(

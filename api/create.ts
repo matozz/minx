@@ -54,11 +54,11 @@ export default async (
 
       // slug already exists
       if (existUrl != null) {
-        return res
-          .status(400)
-          .send({
-            message: "Slug already exists. Expire At: " + new Date(timestamp),
-          });
+        return res.status(400).send({
+          message:
+            "Slug already exists. Expire At: " +
+            new Date(+timestamp).toLocaleDateString(),
+        });
       }
     }
 

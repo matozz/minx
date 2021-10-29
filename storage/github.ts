@@ -38,7 +38,8 @@ export default class GitHub extends BaseStorage {
 
   async addLink(url: string, expires: number, slug?: string): Promise<string> {
     slug = slug == null || slug === "" ? await this.createSlug() : slug;
-    expires = expires != -1 ? Date.now() + date * expires : -1;
+    expires =
+      expires != -1 && expires != 0 ? Date.now() + date * expires : expires;
 
     // create github repo issue comment
     await got.post<Comment>(endpoint, {

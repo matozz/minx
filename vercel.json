@@ -1,6 +1,10 @@
 {
   "rewrites": [
     { "source": "/(new|create)", "destination": "/api/create" },
+    {
+      "source": "/error/404",
+      "destination": "/public/404.html"
+    },
     { "source": "/:slug", "destination": "/api/short" }
   ]
 }
