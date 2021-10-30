@@ -1,4 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
+import { readFileSync } from "fs";
+import { join } from "path";
 import storage from "../storage";
 
 export default async (
@@ -16,7 +18,13 @@ export default async (
     const [url, timestamp] = (await storage.getUrlBySlug(slug)) ?? [];
 
     // target url not found
-    if (url == null) return res.status(404).redirect("/error/404");
+    if (url == null) {
+      const file = readFileSync(
+        join(__dirname, "../public", "404.html"),
+        "utf8"
+      );
+      return res.status(400).end(file);
+    }
 
     // target url expired
     if (Date.now() > +timestamp) return res.status(404).redirect("/error/404");
