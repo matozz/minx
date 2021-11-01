@@ -1,5 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import storage from "../storage";
+import { formatDate } from "../util/date";
 
 export default async (
   req: VercelRequest,
@@ -10,10 +11,12 @@ export default async (
   const {
     url = "",
     slug = "",
+    limits = -1,
     expires = 7,
   } = params as {
     url?: string;
     slug?: string;
+    limits?: number;
     expires?: number;
   };
 
@@ -45,7 +48,12 @@ export default async (
 
     // if slug customized
     if (slug !== "") {
-      const [existUrl, timestamp] = (await storage.getUrlBySlug(slug)) ?? [];
+      const {
+        url: existUrl,
+        timestamp,
+        id,
+        limits,
+      } = (await storage.getCommentBySlug(slug)) ?? {};
 
       // url & slug are the same.
       if (existUrl === url) {
@@ -53,12 +61,22 @@ export default async (
       }
 
       // slug already exists
-      if (existUrl != null) {
-        return res.status(400).send({
-          message:
-            "Slug already exists. Expire At: " +
-            new Date(+timestamp).toLocaleDateString(),
-        });
+      if (existUrl != null && timestamp && id) {
+        if (
+          limits == 0 ||
+          (timestamp && timestamp != -1 && Date.now() > timestamp)
+        ) {
+          // delete expired url
+          await storage.delComment(id);
+        } else {
+          return res.status(400).send({
+            message: `Slug already exists. ${
+              timestamp != -1
+                ? "Expire At: " + formatDate(timestamp, "yyyy-MM-dd hh:mm:ss")
+                : ""
+            }`,
+          });
+        }
       }
     }
 
@@ -71,7 +89,7 @@ export default async (
     }
 
     // create if not exists
-    const newSlug = await storage.addLink(url, expires, slug);
+    const newSlug = await storage.addLink(url, expires, limits, slug);
 
     // response
     res.send({ slug: newSlug, link: origin + newSlug });

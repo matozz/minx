@@ -5,10 +5,22 @@ export const nanoid = customAlphabet(
   4
 );
 
+export interface Comment {
+  id: string;
+  body: string;
+  author_association: "OWNER" | "MEMBER" | "CONTRIBUTOR" | "NONE";
+}
+export interface CommentOptions {
+  url: string;
+  timestamp: number;
+  id: string;
+  limits: number | undefined;
+}
+
 export default abstract class BaseStorage {
   async createSlug(): Promise<string> {
     const slug = nanoid();
-    const exists = await this.getUrlBySlug(slug);
+    const exists = await this.getCommentBySlug(slug);
     if (exists == null) return slug;
     return await this.createSlug();
   }
@@ -20,10 +32,21 @@ export default abstract class BaseStorage {
   abstract addLink(
     url: string,
     expires: number,
+    limits: number,
     slug?: string
   ): Promise<string>;
 
-  abstract getUrlBySlug(slug: string): Promise<string[] | undefined>;
+  abstract updateComment(
+    id: string,
+    slug: string,
+    url: string,
+    expires: number
+  ): // limits: number
+  Promise<void>;
+
+  abstract delComment(id: string): Promise<void>;
+
+  abstract getCommentBySlug(slug: string): Promise<CommentOptions | undefined>;
 
   abstract getSlugByUrl(url: string): Promise<string | undefined>;
 }

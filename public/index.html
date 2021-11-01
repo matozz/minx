@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" />
     <title>Minx</title>
     <style>
       :root {
@@ -17,7 +18,7 @@
       }
 
       body {
-        max-width: 30rem;
+        max-width: 34rem;
         margin-left: auto;
         margin-right: auto;
         padding-left: 2rem;
@@ -103,9 +104,9 @@
         color: gray !important;
       }
 
-      option[value=""][disabled] {
+      /* option[value=""][disabled] {
         display: none;
-      }
+      } */
 
       option {
         color: #33404d;
@@ -133,16 +134,17 @@
 
       details div {
         padding: 1rem;
-        padding-bottom: 0;
+        padding-bottom: 0.5rem;
         border-top: 1px solid var(--border-color);
         display: flex;
+        /* flex-wrap: wrap; */
       }
 
       details small {
         margin: 0;
         font-size: 0.875rem;
-        line-height: 2;
-        padding: 0.5rem 1rem;
+        /* line-height: 2; */
+        padding: 0rem 1rem 0.5rem 1rem;
         display: block;
       }
 
@@ -235,6 +237,23 @@
           transform: rotate(360deg);
         }
       }
+
+      @media screen and (max-width: 500px) {
+        details div {
+          flex-wrap: wrap;
+          justify-content: space-between;
+        }
+        details input {
+          margin-right: 0;
+        }
+        select {
+          margin-top: 1rem;
+          width: 48%;
+        }
+        select:nth-of-type(2) {
+          margin-left: 0 !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -256,16 +275,39 @@
         <summary>Advanced settings</summary>
         <div>
           <input placeholder="Custom slug" x-model="slug" />
-          <select name="expires" id="expires" required x-model="expires">
-            <option value="" disabled selected>Valid Date</option>
-            <option value="7">7 Days</option>
+          <select required x-model="expires" @change="parseDate()">
+            <option value="" disabled>Expire Date</option>
+            <option value="1" selected>1 Day</option>
+            <option value="7" selected>7 Days</option>
             <option value="30">30 Days</option>
             <option value="90">90 Days</option>
-            <option value="0">Once</option>
             <option value="-1">Unlimited</option>
           </select>
+          <select required x-model="limits" style="margin-left: 1rem">
+            <option value="" disabled>Request Limits</option>
+            <option value="-1" selected>Unlimited</option>
+            <option value="1">Once</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="30">30</option>
+          </select>
         </div>
-        <small>Slug is a randomly generated short id by default.</small>
+
+        <small x-show="slug == ''"
+          >Slug is a randomly generated short id.</small
+        >
+
+        <small style="padding-top: 0" x-show="limits != -1 || expires != -1">
+          Your link will be expired
+          <span x-show="expires != -1"> until <b x-text="date"></b> </span>
+          <span x-show="limits != -1">
+            <span x-show="expires != -1">or </span>
+            after <b x-text="limits"></b><b> request</b>.
+          </span>
+          <span x-show="limits == -1"
+            >with <b>Unlimited</b> request times.
+          </span>
+        </small>
       </details>
       <button
         :class="{ loading }"
@@ -281,15 +323,28 @@
       <a href="https://github.com/Matozz">matoz</a>
     </footer>
     <script src="alpine.js"></script>
+    <script src="util.js"></script>
     <script>
       const app = {
         url: "",
         slug: "",
+        limits: -1,
         expires: 7,
+        date: formatDate(
+          Date.now() + 24 * 60 * 60 * 1000 * 7,
+          "yyyy-MM-dd hh:mm:ss"
+        ),
         alert: null,
         loading: false,
+        result: false,
         isValidated() {
           return !/^https?:\/\/.{3,}/.test(this.url);
+        },
+        parseDate() {
+          this.date = formatDate(
+            Date.now() + 24 * 60 * 60 * 1000 * this.expires,
+            "yyyy-MM-dd hh:mm:ss"
+          );
         },
         submit($refs, $nextTick) {
           if (!this.url) {
@@ -311,6 +366,7 @@
           const body = { url: this.url };
           if (this.slug) body.slug = this.slug;
           body.expires = this.expires ? +this.expires : 7;
+          body.limits = this.limits ? +this.limits : -1;
 
           fetch("/create", {
             method: "post",
@@ -326,6 +382,7 @@
               }
 
               this.url = res.link;
+              this.result = true;
 
               $nextTick(() => {
                 $refs.url.select();

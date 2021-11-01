@@ -6,10 +6,5 @@
       "destination": "/public/404.html"
     },
     { "source": "/:slug", "destination": "/api/short" }
-  ],
-  "functions": {
-    "api/short.ts": {
-      "includeFiles": "/public/404.html"
-    }
-  }
+  ]
 }

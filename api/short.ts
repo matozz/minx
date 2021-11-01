@@ -15,10 +15,11 @@ export default async (
 
   try {
     // get target url by slug
-    const [url, timestamp] = (await storage.getUrlBySlug(slug)) ?? [];
+    const { url, timestamp, id, limits } =
+      (await storage.getCommentBySlug(slug)) ?? {};
 
-    // target url not found
-    if (url == null) {
+    // target url not found || target url expired
+    if (url == null || !timestamp || Date.now() > timestamp) {
       const file = readFileSync(
         join(__dirname, "../public", "404.html"),
         "utf8"
@@ -26,8 +27,18 @@ export default async (
       return res.status(400).end(file);
     }
 
-    // target url expired
-    if (Date.now() > +timestamp) return res.status(404).redirect("/error/404");
+    // update request limit
+    if (typeof limits != "undefined" && id) {
+      if (limits > 0) {
+        await storage.updateComment(id, slug, url, timestamp, limits - 1);
+      } else if (limits == 0) {
+        const file = readFileSync(
+          join(__dirname, "../public", "400.html"),
+          "utf8"
+        );
+        return res.status(400).end(file);
+      }
+    }
 
     // add access log
     await storage.addLog(
