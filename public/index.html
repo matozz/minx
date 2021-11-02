@@ -60,6 +60,38 @@
         transition: opacity 0.3s;
       }
 
+      .input_box {
+        position: relative;
+      }
+
+      .copy {
+        position: absolute;
+        right: 12px;
+        top: 8px;
+        bottom: 8px;
+        background-color: rgb(233, 233, 233);
+        display: flex;
+        align-items: center;
+        padding: 0 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 500;
+        user-select: none;
+        transition: background 0.2s, color 0.2s;
+        border-radius: 0.2rem;
+      }
+
+      .copy:hover {
+        /* box-shadow: 0 0 0 0.25rem var(--color-primary-alpha); */
+        background: var(--color-primary-alpha);
+        color: white;
+      }
+
+      .copy:active {
+        background-color: var(--color-primary);
+        outline: 0;
+      }
+
       input {
         -webkit-appearance: none;
         appearance: none;
@@ -154,7 +186,7 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        margin-bottom: 5rem;
+        margin-bottom: 4rem;
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--color-primary);
         border-radius: 0.25rem;
@@ -239,6 +271,9 @@
       }
 
       @media screen and (max-width: 500px) {
+        h1 {
+          margin: 2rem 0;
+        }
         details div {
           flex-wrap: wrap;
           justify-content: space-between;
@@ -266,11 +301,14 @@
         :class="alert?.type"
         x-text="alert?.message"
       ></p>
-      <input
-        placeholder="Enter a URL to shorten..."
-        x-model="url"
-        x-ref="url"
-      />
+      <div class="input_box">
+        <input
+          placeholder="Enter a URL to shorten..."
+          x-model="url"
+          x-ref="url"
+        />
+        <div class="copy" @click="copy()" x-show="result">Copy</div>
+      </div>
       <details>
         <summary>Advanced settings</summary>
         <div>
@@ -346,6 +384,20 @@
             "yyyy-MM-dd hh:mm:ss"
           );
         },
+        copy() {
+          let type = "text/plain";
+          let blob = new Blob([this.url], { type });
+          let data = [new ClipboardItem({ [type]: blob })];
+
+          navigator.clipboard.write(data).then(
+            function () {
+              alert("URL Copied!");
+            },
+            function () {
+              throw new Error("URL copy failed!");
+            }
+          );
+        },
         submit($refs, $nextTick) {
           if (!this.url) {
             this.alert = {
@@ -383,6 +435,7 @@
 
               this.url = res.link;
               this.result = true;
+              this.slug = "";
 
               $nextTick(() => {
                 $refs.url.select();

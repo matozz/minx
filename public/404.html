@@ -50,7 +50,7 @@
       position: relative;
       font-size: 5rem;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
       line-height: 1;
       opacity: 0.4;
     }
@@ -98,6 +98,16 @@
       text-decoration: none;
       transition: color 0.3s;
     }
+
+    @media screen and (max-width: 500px) {
+      #oopss #error span {
+        margin-bottom: 1rem;
+        font-size: 4rem;
+      }
+      .gif {
+        height: 240px;
+      }
+    }
   </style>
 
   <body>
@@ -106,7 +116,7 @@
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
-          class="ldi-f17d8n"
+          class="gif"
           width="100%"
           height="280px"
           viewBox="0 0 100 100"
