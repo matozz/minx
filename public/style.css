@@ -33,10 +33,6 @@ body {
   margin-bottom: 50px;
 }
 
-#oopss #error img {
-  margin: 85px auto 20px;
-  height: 342px;
-}
 #oopss #error span {
   position: relative;
   font-size: 5rem;
@@ -94,7 +90,7 @@ a {
     margin-bottom: 1rem;
     font-size: 4rem;
   }
-  .gif {
+  img {
     height: 240px;
   }
 }
