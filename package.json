@@ -1,22 +1,22 @@
 {
-  "name": "short",
+  "name": "minx",
   "version": "0.1.0",
   "description": "A short url service.",
   "keywords": [
     "short",
     "api",
-    "zce"
+    "matoz"
   ],
-  "repository": "zce/short",
+  "repository": "matozz/minx",
   "license": "MIT",
-  "author": "zce <w@zce.me> (https://zce.me)",
+  "author": "matoz <matoztech@gmail.com> (https://matoz.tech)",
   "scripts": {
     "lint": "ts-standard --fix",
     "develop": "npx vercel dev"
   },
   "renovate": {
     "extends": [
-      "zce"
+      "matoz"
     ]
   },
   "dependencies": {

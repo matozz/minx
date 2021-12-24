@@ -1,3 +1,3 @@
-import GitHub from "./github";
+import GitHub from './github'
 
-export default new GitHub();
+export default new GitHub()
